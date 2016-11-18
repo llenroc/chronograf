@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import _ from 'lodash';
 import {proxy} from 'utils/queryUrlGenerator';
 
-function _fetchTimeSeries(source, db, rp, query) {
+function fetchTimeSeries(source, db, rp, query) {
   return proxy({source, db, rp, query});
 }
 
@@ -59,7 +59,7 @@ export default function AutoRefresh(ComposedComponent) {
       let count = 0;
       const newSeries = [];
       queries.forEach(({host, database, rp, text}) => {
-        _fetchTimeSeries(host, database, rp, text).then((resp) => {
+        fetchTimeSeries(host, database, rp, text).then((resp) => {
           newSeries.push({identifier: host, response: resp.data});
           count += 1;
           if (count === queries.length) {

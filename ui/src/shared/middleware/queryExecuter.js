@@ -6,7 +6,7 @@ export default function makeQueryExecuter() {
     if (action.meta && action.meta.query) {
       const {host, query} = action.payload;
 
-      _fetchTimeSeries(host, query)
+      fetchTimeSeries(host, query)
       .then((timeSeries) => {
         next({
           type: 'LOAD_TIME_SERIES',
@@ -22,7 +22,7 @@ export default function makeQueryExecuter() {
   };
 }
 
-function _fetchTimeSeries(host, query) {
+function fetchTimeSeries(host, query) {
   const db = '_internal';
   const url = encodeURIComponent(`http://${host}/query?db=${db}&epoch=ms&q=${query}`);
 
