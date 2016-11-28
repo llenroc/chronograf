@@ -1,6 +1,10 @@
 import React, {PropTypes} from 'react';
 import {withRouter} from 'react-router';
+import {connect} from 'react-redux';
 import {getSources} from 'src/shared/apis';
+import {updateSources as updateSourcesAction} from 'src/shared/actions/sources';
+import * as sourcesActionCreators from 'src/shared/actions/sources';
+import {bindActionCreators} from 'redux';
 import {showDatabases} from 'src/shared/apis/metaQuery';
 
 const {bool, number, string, node, func, shape} = PropTypes;
@@ -21,6 +25,7 @@ const CheckSources = React.createClass({
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired,
     }).isRequired,
+    sources: PropTypes.array.isRequired,
   },
 
   contextTypes: {
@@ -35,18 +40,25 @@ const CheckSources = React.createClass({
   getInitialState() {
     return {
       isFetching: true,
-      sources: [],
     };
   },
 
   componentDidMount() {
-    this.updateSources();
+    getSources().then(({data: {sources}}) => {
+      this.setState({isFetching: false});
+      updateSourcesAction(sources);
+      console.log("blah blah get sources");  // eslint-disable-line no-console
+      // debugger;
+      // console.log(this.context.store);
+    }).catch(() => {
+      this.props.addFlashMessage({type: 'error', text: "Unable to connect to Chronograf server"});
+      this.setState({isFetching: false});
+    });
   },
 
   componentWillUpdate(nextProps, nextState) {
-    this.updateSources();
-    const {router, location, params, addFlashMessage} = nextProps;
-    const {isFetching, sources} = nextState;
+    const {router, location, params, addFlashMessage, sources} = nextProps;
+    const {isFetching} = nextState;
     const source = sources.find((s) => s.id === params.sourceID);
     if (!isFetching && !source) {
       return router.push(`/?redirectPath=${location.pathname}`);
@@ -60,18 +72,10 @@ const CheckSources = React.createClass({
     }
   },
 
-  updateSources() {
-    getSources().then(({data: {sources}}) => {
-      this.setState({sources, isFetching: false});
-    }).catch(() => {
-      this.props.addFlashMessage({type: 'error', text: "Unable to connect to Chronograf server"});
-      this.setState({isFetching: false});
-    });
-  },
-
   render() {
-    const {params} = this.props;
-    const {isFetching, sources} = this.state;
+    const {params, sources} = this.props;
+    const {isFetching} = this.state;
+    console.log("sources!", sources); // eslint-disable-line no-console
     const source = sources.find((s) => s.id === params.sourceID);
 
     if (isFetching || !source) {
@@ -84,4 +88,16 @@ const CheckSources = React.createClass({
   },
 });
 
-export default withRouter(CheckSources);
+function mapStateToProps(state) {
+  return {
+    sources: state.sources,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    sourcesActions: bindActionCreators(sourcesActionCreators, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(CheckSources));

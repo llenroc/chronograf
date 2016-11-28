@@ -5,9 +5,10 @@ import makeQueryExecuter from 'src/shared/middleware/queryExecuter';
 import * as chronografReducers from 'src/chronograf/reducers';
 import rulesReducer from 'src/kapacitor/reducers/rules';
 import notifications from 'src/shared/reducers/notifications';
+import sources from 'src/shared/reducers/sources';
 import persistStateEnhancer from './persistStateEnhancer';
 
-const rootReducer = combineReducers({notifications, ...chronografReducers, rules: rulesReducer});
+const rootReducer = combineReducers({notifications, sources, ...chronografReducers, rules: rulesReducer});
 
 export default function configureStore(initialState) {
   const createPersistentStore = compose(
@@ -24,4 +25,3 @@ export default function configureStore(initialState) {
     initialState,
   );
 }
-
