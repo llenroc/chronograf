@@ -12,6 +12,6 @@ export function addSource(source) {
     type: 'SOURCE_ADDED',
     payload: {
       source,
-    }
-  }
+    },
+  };
 }

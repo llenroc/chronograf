@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {getSources} from 'src/shared/apis';
 import {updateSources as updateSourcesAction} from 'src/shared/actions/sources';
 import {showDatabases} from 'src/shared/apis/metaQuery';
+import {bindActionCreators} from 'redux';
 
 const {bool, number, string, node, func, shape} = PropTypes;
 
@@ -24,6 +25,7 @@ const CheckSources = React.createClass({
       pathname: PropTypes.string.isRequired,
     }).isRequired,
     sources: PropTypes.array.isRequired,
+    updateSourcesAction: PropTypes.func.isRequired,
   },
 
   contextTypes: {
@@ -43,11 +45,8 @@ const CheckSources = React.createClass({
 
   componentDidMount() {
     getSources().then(({data: {sources}}) => {
+      this.props.updateSourcesAction(sources);
       this.setState({isFetching: false});
-      updateSourcesAction(sources);
-      console.log("blah blah get sources");  // eslint-disable-line no-console
-      // debugger;
-      // console.log(this.context.store);
     }).catch(() => {
       this.props.addFlashMessage({type: 'error', text: "Unable to connect to Chronograf server"});
       this.setState({isFetching: false});
@@ -59,7 +58,7 @@ const CheckSources = React.createClass({
     const {isFetching} = nextState;
     const source = sources.find((s) => s.id === params.sourceID);
     if (!isFetching && !source) {
-      return router.push(`/?redirectPath=${location.pathname}`);
+      // return router.push(`/?redirectPath=${location.pathname}`);
     }
 
     if (!isFetching && !location.pathname.includes("/manage-sources")) {
@@ -73,7 +72,6 @@ const CheckSources = React.createClass({
   render() {
     const {params, sources} = this.props;
     const {isFetching} = this.state;
-    console.log("sources!", sources); // eslint-disable-line no-console
     const source = sources.find((s) => s.id === params.sourceID);
 
     if (isFetching || !source) {
@@ -92,4 +90,10 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(withRouter(CheckSources));
+function mapDispatchToProps(dispatch) {
+  return {
+    updateSourcesAction: bindActionCreators(updateSourcesAction, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(CheckSources));
