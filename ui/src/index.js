@@ -15,6 +15,7 @@ import NotFound from 'src/shared/components/NotFound';
 import NoClusterError from 'src/shared/components/NoClusterError';
 import configureStore from 'src/store/configureStore';
 import {getSources} from 'shared/apis';
+import {updateSources} from 'shared/actions/sources';
 
 import 'src/style/enterprise_style/application.scss';
 
@@ -71,6 +72,7 @@ const Root = React.createClass({
   redirectToHosts(_, replace, callback) {
     getSources().then(({data: {sources}}) => {
       if (sources && sources.length) {
+        store.dispatch(updateSources(sources));
         const path = `/sources/${this.activeSource(sources).id}/hosts`;
         replace(path);
       }

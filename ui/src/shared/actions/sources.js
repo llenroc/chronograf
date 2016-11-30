@@ -1,5 +1,3 @@
-// import {getSources} from '../apis';
-
 export function updateSources(sources) {
   return {
     type: 'SOURCES_UPDATED',
@@ -9,9 +7,11 @@ export function updateSources(sources) {
   };
 }
 
-// TODO: move updateSources from CheckSources into this
-// export function fetchSources(sources) {
-//   return (dispatch) => {
-//
-//   }
-// }
+export function addSource(source) {
+  return {
+    type: 'SOURCE_ADDED',
+    payload: {
+      source,
+    }
+  }
+}

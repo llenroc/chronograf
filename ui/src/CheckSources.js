@@ -3,8 +3,6 @@ import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {getSources} from 'src/shared/apis';
 import {updateSources as updateSourcesAction} from 'src/shared/actions/sources';
-import * as sourcesActionCreators from 'src/shared/actions/sources';
-import {bindActionCreators} from 'redux';
 import {showDatabases} from 'src/shared/apis/metaQuery';
 
 const {bool, number, string, node, func, shape} = PropTypes;
@@ -94,10 +92,4 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    sourcesActions: bindActionCreators(sourcesActionCreators, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(CheckSources));
+export default connect(mapStateToProps)(withRouter(CheckSources));
