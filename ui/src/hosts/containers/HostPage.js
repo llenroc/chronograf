@@ -110,6 +110,7 @@ export const HostPage = React.createClass({
           q.text = q.query;
           q.database = source.telegraf;
         });
+        //cell.type = 'number';
       });
       translateY = maxY;
 
