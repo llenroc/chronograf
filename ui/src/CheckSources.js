@@ -58,7 +58,7 @@ const CheckSources = React.createClass({
     const {isFetching} = nextState;
     const source = sources.find((s) => s.id === params.sourceID);
     if (!isFetching && !source) {
-      // return router.push(`/?redirectPath=${location.pathname}`);
+      return router.push(`/?redirectPath=${location.pathname}`);
     }
 
     if (!isFetching && !location.pathname.includes("/manage-sources")) {

@@ -72,7 +72,6 @@ const Root = React.createClass({
   redirectToHosts(_, replace, callback) {
     getSources().then(({data: {sources}}) => {
       if (sources && sources.length) {
-        store.dispatch(updateSources(sources));
         const path = `/sources/${this.activeSource(sources).id}/hosts`;
         replace(path);
       }
