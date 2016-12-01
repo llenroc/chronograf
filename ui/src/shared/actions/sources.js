@@ -7,6 +7,15 @@ export function updateSources(sources) {
   };
 }
 
+export function removeSource(source) {
+  return {
+    type: 'SOURCE_REMOVED',
+    payload: {
+      source,
+    },
+  };
+}
+
 export function addSource(source) {
   return {
     type: 'SOURCE_ADDED',
