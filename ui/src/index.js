@@ -15,7 +15,6 @@ import NotFound from 'src/shared/components/NotFound';
 import NoClusterError from 'src/shared/components/NoClusterError';
 import configureStore from 'src/store/configureStore';
 import {getSources} from 'shared/apis';
-import {updateSources} from 'shared/actions/sources';
 
 import 'src/style/enterprise_style/application.scss';
 

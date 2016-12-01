@@ -1,7 +1,13 @@
 import React, {PropTypes} from 'react';
 import _ from 'lodash';
 import {withRouter, Link} from 'react-router';
-import {getSources, getKapacitor, deleteSource} from 'shared/apis';
+import {getKapacitor, deleteSource} from 'shared/apis';
+import {
+  updateSources as updateSourcesAction,
+  removeSource as removeSourceAction,
+} from 'src/shared/actions/sources';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 export const ManageSources = React.createClass({
   propTypes: {
@@ -16,6 +22,8 @@ export const ManageSources = React.createClass({
       }),
     }),
     addFlashMessage: PropTypes.func,
+    updateSourcesAction: PropTypes.func.isRequired,
+    removeSourceAction: PropTypes.func.isRequired,
   },
   getInitialState() {
     return {
@@ -24,22 +32,20 @@ export const ManageSources = React.createClass({
   },
 
   componentDidMount() {
-    getSources().then(({data: {sources}}) => {
-      this.setState({sources}, () => {
-        sources.forEach((source) => {
-          getKapacitor(source).then((kapacitor) => {
-            this.setState((prevState) => {
-              const newSources = prevState.sources.map((newSource) => {
-                if (newSource.id !== source.id) {
-                  return newSource;
-                }
+    // getSources().then(({data: {sources}}) => {
+      // this.setState({sources}, () => {
+    this.state.sources.forEach((source) => {
+      getKapacitor(source).then((kapacitor) => {
+        this.setState((prevState) => {
+          const newSources = prevState.sources.map((newSource) => {
+            if (newSource.id !== source.id) {
+              return newSource;
+            }
 
-                return Object.assign({}, newSource, {kapacitor});
-              });
-
-              return Object.assign({}, prevState, {sources: newSources});
-            });
+            return Object.assign({}, newSource, {kapacitor});
           });
+
+          return Object.assign({}, prevState, {sources: newSources});
         });
       });
     });
@@ -50,7 +56,7 @@ export const ManageSources = React.createClass({
 
     deleteSource(source).then(() => {
       const updatedSourceList = this.state.sources.filter((s) => s.id !== source.id);
-      this.setState({sources: updatedSourceList});
+      updateSourcesAction(updatedSourceList);
       addFlashMessage({type: 'success', text: 'Source removed from Chronograf'});
     }).catch(() => {
       addFlashMessage({type: 'error', text: 'Could not remove source from Chronograf'});
@@ -122,4 +128,17 @@ export const ManageSources = React.createClass({
   },
 });
 
-export default withRouter(ManageSources);
+function mapStateToProps(state) {
+  return {
+    sources: state.sources,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateSourcesAction: bindActionCreators(updateSourcesAction, dispatch),
+    removeSourceAction: bindActionCreators(removeSourceAction, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ManageSources));

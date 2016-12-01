@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {withRouter} from 'react-router';
 import {getSource, createSource, updateSource} from 'shared/apis';
+// import {updateSources} from 'shared/actions/sources';
 import classNames from 'classnames';
 
 export const SourceForm = React.createClass({
@@ -47,6 +48,8 @@ export const SourceForm = React.createClass({
     });
     if (this.state.editMode) {
       updateSource(newSource).then(() => {
+        // update source by triggering updateSources action
+        // is there a response that comes back that we can update with?
         router.push(`/sources/${params.sourceID}/manage-sources`);
         addFlashMessage({type: 'success', text: 'The source was successfully updated'});
       }).catch(() => {
@@ -54,6 +57,7 @@ export const SourceForm = React.createClass({
       });
     } else {
       createSource(newSource).then(() => {
+        // again, update sources by triggering action
         router.push(`/sources/${params.sourceID}/manage-sources`);
         addFlashMessage({type: 'success', text: 'The source was successfully created'});
       }).catch(() => {

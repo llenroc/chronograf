@@ -5,10 +5,10 @@ export default function sources(state = [], action) {
       return updatedSources;
     }
 
-    case 'SOURCE_ADDED': {
-      const {source} = action.payload;
-      
-    }
+    // case 'SOURCE_ADDED': {
+    //   const {source} = action.payload;
+    //
+    // }
   }
 
   return state;
